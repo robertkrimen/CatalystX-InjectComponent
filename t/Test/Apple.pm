@@ -1,4 +1,4 @@
-package t::Test::Component1;
+package t::Test::Apple;
 
 use strict;
 use warnings;
@@ -6,10 +6,9 @@ use warnings;
 use parent qw/Catalyst::Controller/;
 
 sub default :Path {
-    my ( $self, $ctx ) = @_;
 }
 
-sub durp :Local {
+sub apple :Local {
 }
 
 1;

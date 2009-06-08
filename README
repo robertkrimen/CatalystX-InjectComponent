@@ -5,6 +5,69 @@ NAME
 VERSION
     Version 0.01
 
+SYNOPSIS
+        package My::App;
+
+        use Catalyst::Runtime '5.80';
+
+        use Moose;
+        BEGIN { extends qw/Catalyst/ }
+
+        ...
+
+        after 'setup_components' => sub {
+            my $class = shift;
+            CatalystX::InjectComponent->inject( catalyst => $class, component => 'MyModel' );
+            if ( $class->config->{ ... ) {
+                CatalystX::InjectComponent->inject( catalyst => $class, component => 'MyRootV2', into => 'Controller::Root' );
+            }
+            else {
+                CatalystX::InjectComponent->inject( catalyst => $class, component => 'MyRootV1', into => 'Root' ); # Controller:: will be automatically prefixed
+            }
+        };
+
+DESCRIPTION
+    CatalystX::InjectComponent will inject Controller, Model, and View
+    components into your Catalyst application at setup (run)time. It does
+    this by creating a new package on-the-fly, having that package extend
+    the given component, and then having Catalyst setup the new component
+    (via "->setup_component")
+
+So, how do I use this thing?
+    You should inject your components when appropiate, typically after
+    "setup_compenents" runs
+
+    If you're using the Moose version of Catalyst, then you can use the
+    following technique:
+
+        use Moose;
+        BEGIN { extends qw/Catalyst/ }
+
+        after 'setup_components' => sub {
+            my $class = shift;
+
+            CatalystX::InjectComponent->inject( catalyst => $class, ... )
+        };
+
+METHODS
+  CatalystX::InjectComponent->inject( ... )
+        catalyst        The Catalyst package to inject into (e.g. My::App)
+        component       The component package to inject
+        into            An optional moniker to use as the package name for the derived component
+
+    For example:
+
+        ->inject( catalyst => My::App, component => Other::App::Controller::Apple )
+            
+        The above will create 'My::App::Controller::Other::App::Controller::Apple'
+
+        ->inject( catalyst => My::App, component => Other::App::Controller::Apple, into => Apple )
+
+            The above will create 'My::App::Controller::Apple'
+
+ACKNOWLEDGEMENTS
+    Inspired by Catalyst::Plugin::AutoCRUD
+
 AUTHOR
     Robert Krimen, "<rkrimen at cpan.org>"
 

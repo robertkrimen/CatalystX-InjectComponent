@@ -15,55 +15,136 @@ Version 0.01
 
 our $VERSION = '0.01';
 
+=head1 SYNOPSIS
+
+    package My::App;
+
+    use Catalyst::Runtime '5.80';
+
+    use Moose;
+    BEGIN { extends qw/Catalyst/ }
+
+    ...
+
+    after 'setup_components' => sub {
+        my $class = shift;
+        CatalystX::InjectComponent->inject( catalyst => $class, component => 'MyModel' );
+        if ( $class->config->{ ... ) {
+            CatalystX::InjectComponent->inject( catalyst => $class, component => 'MyRootV2', into => 'Controller::Root' );
+        }
+        else {
+            CatalystX::InjectComponent->inject( catalyst => $class, component => 'MyRootV1', into => 'Root' ); # Controller:: will be automatically prefixed
+        }
+    };
+
+=head1 DESCRIPTION
+
+CatalystX::InjectComponent will inject Controller, Model, and View components into your Catalyst application at setup (run)time. It does this by creating
+a new package on-the-fly, having that package extend the given component, and then having Catalyst setup the new component (via C<< ->setup_component >>)
+
+=head1 So, how do I use this thing?
+
+You should inject your components when appropiate, typically after C<setup_compenents> runs
+
+If you're using the Moose version of Catalyst, then you can use the following technique:
+
+    use Moose;
+    BEGIN { extends qw/Catalyst/ }
+
+    after 'setup_components' => sub {
+        my $class = shift;
+
+        CatalystX::InjectComponent->inject( catalyst => $class, ... )
+    };
+
+=head1 METHODS
+
+=head2 CatalystX::InjectComponent->inject( ... )
+
+    catalyst        The Catalyst package to inject into (e.g. My::App)
+    component       The component package to inject
+    into            An optional moniker to use as the package name for the derived component
+
+For example:
+
+    ->inject( catalyst => My::App, component => Other::App::Controller::Apple )
+        
+        The above will create 'My::App::Controller::Other::App::Controller::Apple'
+
+    ->inject( catalyst => My::App, component => Other::App::Controller::Apple, into => Apple )
+
+        The above will create 'My::App::Controller::Apple'
+
+=head1 ACKNOWLEDGEMENTS
+
+Inspired by L<Catalyst::Plugin::AutoCRUD>
+
+=cut
+
 use Devel::InnerPackage;
 use Class::Inspector;
 use Carp;
 
-sub _inject_component {
+sub put_package_into_INC ($) {
+    my $package = shift;
+    (my $file = "$package.pm") =~ s{::}{/}g;
+    $INC{$file} ||= 1;
+}
+
+sub loaded ($) {
+    my $package = shift;
+    if ( Class::Inspector->loaded( $package ) ) {
+        put_package_into_INC $package; # As a courtesy
+        return 1;
+    }
+    return 0;
+}
+
+sub inject {
     my $self = shift;
-    my $into = shift;
-    my $base = shift;
-    my $moniker = shift;
+    my %given = @_;
 
-    croak "No into (Catalyst package) given" unless $into;
-    croak "No base (package) given" unless $base;
-    croak "No moniker given" unless $moniker;
+    my $catalyst = $given{catalyst};
+    my $component = $given{component};
 
-    if ( ! Class::Inspector->loaded( $base ) ) {
-        eval "require $base;" or croak "Couldn't require $base (to inject into $moniker)";
+    croak "No Catalyst (package) given" unless $catalyst;
+    croak "No component (package) given" unless $component;
+
+    unless ( loaded $component ) {
+        eval "require $component;" or croak "Couldn't require (component base) $component: $@";
     }
 
-    {
-        # Meh, hack
-        (my $file = "$base.pm") =~ s{::}{/}g;
-        $INC{$file} ||= 1;
+    my $into = $given{into} || $component;
+    unless ( $into =~ m/^(?:Controller|Model|View)::/ || $given{skip_mvc_renaming} ) {
+        my $category;
+        for (qw/ Controller Model View /) {
+            if ( $component->isa( "Catalyst::$_" ) ) {
+                $category = $_;
+                last;
+            }
+        }
+        croak "Don't know what kind of component \"$component\" is" unless $category;
+        $into = "${category}::$into";
+    }
+    my $component_package = join '::', $catalyst, $into;
+
+    unless ( loaded $component_package ) {
+        eval "package $component_package; use parent qw/$component/; 1;" or
+            croak "Unable to build component package for \"$component_package\": $@";
+        put_package_into_INC $component_package; # As a courtesy
     }
 
-    my $component_package = join '::', $into, $moniker;
-
-    if ( Class::Inspector->loaded( $component_package ) ) {
-    }
-    else {
-       eval "package $component_package; use parent qw/$base/; 1;" or
-        croak "Unable to build component package for \"$component_package\": $@";
-    }
-
-    if (1) {
-        (my $file = "$component_package.pm") =~ s{::}{/}g;
-        $INC{$file} ||= 1;
-    }
-
-    $self->_setup_component( $into => $component_package );
+    $self->_setup_component( $catalyst => $component_package );
     for my $inner_component_package ( Devel::InnerPackage::list_packages( $component_package ) ) {
-        $self->_setup_component( $into => $inner_component_package );
+        $self->_setup_component( $catalyst => $inner_component_package );
     }
 }
 
 sub _setup_component {
     my $self = shift;
-    my $into = shift;
+    my $catalyst = shift;
     my $component_package = shift;
-    $into->components->{$component_package} = $into->setup_component( $component_package );
+    $catalyst->components->{$component_package} = $catalyst->setup_component( $component_package );
 }
 
 =head1 AUTHOR
