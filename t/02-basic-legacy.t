@@ -25,10 +25,10 @@ use Catalyst qw/ConfigLoader Static::Simple/;
 
 after 'setup_components' => sub {
     my $self = shift;
-    CatalystX::InjectComponent->inject( into => __PACKAGE__, component => 'Model::Banana' );
-    CatalystX::InjectComponent->inject( into => __PACKAGE__, component => 't::Test::Apple' );
-    CatalystX::InjectComponent->inject( into => __PACKAGE__, component => 'Model::Banana', as => 'Cherry' );
-    CatalystX::InjectComponent->inject( into => __PACKAGE__, component => 't::Test::Apple', as => 'Apple' );
+    CatalystX::InjectComponent->inject( catalyst => __PACKAGE__, component => 'Model::Banana' );
+    CatalystX::InjectComponent->inject( catalyst => __PACKAGE__, component => 't::Test::Apple' );
+    CatalystX::InjectComponent->inject( catalyst => __PACKAGE__, component => 'Model::Banana', into => 'Cherry' );
+    CatalystX::InjectComponent->inject( catalyst => __PACKAGE__, component => 't::Test::Apple', into => 'Apple' );
 };
 
 TestCatalyst->config( 'home' => '.' );

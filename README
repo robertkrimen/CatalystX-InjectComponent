@@ -3,7 +3,7 @@ NAME
     application
 
 VERSION
-    Version 0.01
+    Version 0.020
 
 SYNOPSIS
         package My::App;
@@ -17,12 +17,12 @@ SYNOPSIS
 
         after 'setup_components' => sub {
             my $class = shift;
-            CatalystX::InjectComponent->inject( catalyst => $class, component => 'MyModel' );
+            CatalystX::InjectComponent->inject( into => $class, component => 'MyModel' );
             if ( $class->config->{ ... ) {
-                CatalystX::InjectComponent->inject( catalyst => $class, component => 'MyRootV2', into => 'Controller::Root' );
+                CatalystX::InjectComponent->inject( into => $class, component => 'MyRootV2', as => 'Controller::Root' );
             }
             else {
-                CatalystX::InjectComponent->inject( catalyst => $class, component => 'MyRootV1', into => 'Root' ); # Controller:: will be automatically prefixed
+                CatalystX::InjectComponent->inject( into => $class, component => 'MyRootV1', as => 'Root' ); # Controller:: will be automatically prefixed
             }
         };
 
@@ -51,17 +51,17 @@ So, how do I use this thing?
 
 METHODS
   CatalystX::InjectComponent->inject( ... )
-        catalyst        The Catalyst package to inject into (e.g. My::App)
-        component       The component package to inject
-        into            An optional moniker to use as the package name for the derived component
+        into        The Catalyst package to inject into (e.g. My::App)
+        component   The component package to inject
+        as          An optional moniker to use as the package name for the derived component
 
     For example:
 
-        ->inject( catalyst => My::App, component => Other::App::Controller::Apple )
+        ->inject( into => My::App, component => Other::App::Controller::Apple )
             
         The above will create 'My::App::Controller::Other::App::Controller::Apple'
 
-        ->inject( catalyst => My::App, component => Other::App::Controller::Apple, into => Apple )
+        ->inject( into => My::App, component => Other::App::Controller::Apple, as => Apple )
 
             The above will create 'My::App::Controller::Apple'
 

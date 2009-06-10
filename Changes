@@ -1,2 +1,5 @@
-0.01 Monday June 08 16:08:08 PDT 2009:
+0.020 Wednesday June 10 11:24:59 PDT 2009:
+    - Altered injection interface: into =>, component =>, as =>
+
+0.010 Monday June 08 16:08:08 PDT 2009:
     - Initial release

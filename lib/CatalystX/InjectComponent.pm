@@ -9,11 +9,11 @@ CatalystX::InjectComponent - Inject components into your Catalyst application
 
 =head1 VERSION
 
-Version 0.01
+Version 0.020
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.020';
 
 =head1 SYNOPSIS
 
@@ -28,12 +28,12 @@ our $VERSION = '0.01';
 
     after 'setup_components' => sub {
         my $class = shift;
-        CatalystX::InjectComponent->inject( catalyst => $class, component => 'MyModel' );
+        CatalystX::InjectComponent->inject( into => $class, component => 'MyModel' );
         if ( $class->config->{ ... ) {
-            CatalystX::InjectComponent->inject( catalyst => $class, component => 'MyRootV2', into => 'Controller::Root' );
+            CatalystX::InjectComponent->inject( into => $class, component => 'MyRootV2', as => 'Controller::Root' );
         }
         else {
-            CatalystX::InjectComponent->inject( catalyst => $class, component => 'MyRootV1', into => 'Root' ); # Controller:: will be automatically prefixed
+            CatalystX::InjectComponent->inject( into => $class, component => 'MyRootV1', as => 'Root' ); # Controller:: will be automatically prefixed
         }
     };
 
@@ -61,17 +61,17 @@ If you're using the Moose version of Catalyst, then you can use the following te
 
 =head2 CatalystX::InjectComponent->inject( ... )
 
-    catalyst        The Catalyst package to inject into (e.g. My::App)
-    component       The component package to inject
-    into            An optional moniker to use as the package name for the derived component
+    into        The Catalyst package to inject into (e.g. My::App)
+    component   The component package to inject
+    as          An optional moniker to use as the package name for the derived component 
 
 For example:
 
-    ->inject( catalyst => My::App, component => Other::App::Controller::Apple )
+    ->inject( into => My::App, component => Other::App::Controller::Apple )
         
         The above will create 'My::App::Controller::Other::App::Controller::Apple'
 
-    ->inject( catalyst => My::App, component => Other::App::Controller::Apple, into => Apple )
+    ->inject( into => My::App, component => Other::App::Controller::Apple, as => Apple )
 
         The above will create 'My::App::Controller::Apple'
 
@@ -104,18 +104,23 @@ sub inject {
     my $self = shift;
     my %given = @_;
 
-    my $catalyst = $given{catalyst};
-    my $component = $given{component};
-
-    croak "No Catalyst (package) given" unless $catalyst;
+    my ($into, $component, $as);
+    if ( $given{catalyst} ) { # Legacy argument parsing
+        ($into, $component, $as) = @given{ qw/catalyst component into/ };
+    }
+    else {
+        ($into, $component, $as) = @given{ qw/into component as/ };
+    }
+    
+    croak "No Catalyst (package) given" unless $into;
     croak "No component (package) given" unless $component;
 
     unless ( loaded $component ) {
         eval "require $component;" or croak "Couldn't require (component base) $component: $@";
     }
 
-    my $into = $given{into} || $component;
-    unless ( $into =~ m/^(?:Controller|Model|View)::/ || $given{skip_mvc_renaming} ) {
+    $as ||= $component;
+    unless ( $as =~ m/^(?:Controller|Model|View)::/ || $given{skip_mvc_renaming} ) {
         my $category;
         for (qw/ Controller Model View /) {
             if ( $component->isa( "Catalyst::$_" ) ) {
@@ -124,9 +129,9 @@ sub inject {
             }
         }
         croak "Don't know what kind of component \"$component\" is" unless $category;
-        $into = "${category}::$into";
+        $as = "${category}::$as";
     }
-    my $component_package = join '::', $catalyst, $into;
+    my $component_package = join '::', $into, $as;
 
     unless ( loaded $component_package ) {
         eval "package $component_package; use parent qw/$component/; 1;" or
@@ -134,17 +139,17 @@ sub inject {
         put_package_into_INC $component_package; # As a courtesy
     }
 
-    $self->_setup_component( $catalyst => $component_package );
+    $self->_setup_component( $into => $component_package );
     for my $inner_component_package ( Devel::InnerPackage::list_packages( $component_package ) ) {
-        $self->_setup_component( $catalyst => $inner_component_package );
+        $self->_setup_component( $into => $inner_component_package );
     }
 }
 
 sub _setup_component {
     my $self = shift;
-    my $catalyst = shift;
+    my $into = shift;
     my $component_package = shift;
-    $catalyst->components->{$component_package} = $catalyst->setup_component( $component_package );
+    $into->components->{$component_package} = $into->setup_component( $component_package );
 }
 
 =head1 AUTHOR

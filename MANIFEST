@@ -14,4 +14,5 @@ inc/Module/Install/WriteAll.pm
 META.yml
 t/00-load.t
 t/01-basic.t
+t/02-basic-legacy.t
 t/Test/Apple.pm
