@@ -1,4 +1,5 @@
-    - Remove Plugins from test apps to fix dependencies
+0.022 Wednesday October 07 22:22:18 PDT 2009:
+    - Remove plugins from tests to fix dependency failure (thanks bobtfish)
 
 0.021 Wednesday June 24 00:49:08 PDT 2009:
     - Added parent dependency
