@@ -1,3 +1,5 @@
+    - Remove Plugins from test apps to fix dependencies
+
 0.021 Wednesday June 24 00:49:08 PDT 2009:
     - Added parent dependency
 

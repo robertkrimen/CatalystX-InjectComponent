@@ -21,7 +21,7 @@ use Catalyst::Runtime '5.70';
 use Moose;
 BEGIN { extends qw/Catalyst/ }
 
-use Catalyst qw/ConfigLoader Static::Simple/;
+use Catalyst;
 
 after 'setup_components' => sub {
     my $self = shift;
