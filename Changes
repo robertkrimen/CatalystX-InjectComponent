@@ -1,3 +1,6 @@
+0.023 Monday October 12 16:10:13 PDT 2009
+    - Added Catalyst::Runtime dependency (thanks Andreas Koenig)
+
 0.022 Wednesday October 07 22:22:18 PDT 2009:
     - Remove plugins from tests to fix dependency failure (thanks bobtfish)
 

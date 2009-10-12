@@ -32,6 +32,7 @@ parent
 Carp
 Class::Inspector
 Devel::InnerPackage
+Catalyst::Runtime
 _END_
 }
 

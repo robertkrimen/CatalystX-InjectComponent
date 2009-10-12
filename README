@@ -3,7 +3,7 @@ NAME
     application
 
 VERSION
-    Version 0.022
+    Version 0.023
 
 SYNOPSIS
         package My::App;
