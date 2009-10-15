@@ -3,7 +3,7 @@ NAME
     application
 
 VERSION
-    Version 0.023
+    Version 0.024
 
 SYNOPSIS
         package My::App;
@@ -46,7 +46,7 @@ So, how do I use this thing?
         after 'setup_components' => sub {
             my $class = shift;
 
-            CatalystX::InjectComponent->inject( catalyst => $class, ... )
+            CatalystX::InjectComponent->inject( into => $class, ... )
         };
 
 METHODS
