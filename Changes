@@ -1,3 +1,6 @@
+0.024 Wednesday October 14 18:30:13 PDT 2009:
+    - Make sure we're being used with Moose-based Catalyst
+
 0.023 Monday October 12 16:10:13 PDT 2009
     - Added Catalyst::Runtime dependency (thanks Andreas Koenig)
 

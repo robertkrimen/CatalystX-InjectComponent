@@ -54,7 +54,7 @@ If you're using the Moose version of Catalyst, then you can use the following te
     after 'setup_components' => sub {
         my $class = shift;
 
-        CatalystX::InjectComponent->inject( catalyst => $class, ... )
+        CatalystX::InjectComponent->inject( into => $class, ... )
     };
 
 =head1 METHODS
