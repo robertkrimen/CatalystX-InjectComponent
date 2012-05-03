@@ -149,7 +149,13 @@ sub _setup_component {
     my $self = shift;
     my $into = shift;
     my $component_package = shift;
-    $into->components->{$component_package} = $into->setup_component( $component_package );
+
+    if ($into->can('container')) {
+        $into->container->add_component( $component_package );
+    }
+    else {
+        $into->components->{$component_package} = $into->setup_component( $component_package );
+    }
 }
 
 =head1 AUTHOR
