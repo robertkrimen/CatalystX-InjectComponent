@@ -1,3 +1,6 @@
+0.025 Monday July 02 13:47:45 PDT 2012:
+    - Incorporate documentation fix (rt76363) <gregoa@debian.org>
+
 0.024 Wednesday October 14 18:30:13 PDT 2009:
     - Make sure we're being used with Moose-based Catalyst
 

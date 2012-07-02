@@ -3,7 +3,7 @@ NAME
     application
 
 VERSION
-    Version 0.024
+    version 0.025
 
 SYNOPSIS
         package My::App;
@@ -34,7 +34,7 @@ DESCRIPTION
     (via "->setup_component")
 
 So, how do I use this thing?
-    You should inject your components when appropiate, typically after
+    You should inject your components when appropriate, typically after
     "setup_compenents" runs
 
     If you're using the Moose version of Catalyst, then you can use the
@@ -58,8 +58,8 @@ METHODS
     For example:
 
         ->inject( into => My::App, component => Other::App::Controller::Apple )
-            
-        The above will create 'My::App::Controller::Other::App::Controller::Apple'
+        
+            The above will create 'My::App::Controller::Other::App::Controller::Apple'
 
         ->inject( into => My::App, component => Other::App::Controller::Apple, as => Apple )
 
@@ -69,43 +69,11 @@ ACKNOWLEDGEMENTS
     Inspired by Catalyst::Plugin::AutoCRUD
 
 AUTHOR
-    Robert Krimen, "<rkrimen at cpan.org>"
+    Robert Krimen <robertkrimen@gmail.com>
 
-BUGS
-    Please report any bugs or feature requests to
-    "bug-catalystx-injectcomponent at rt.cpan.org", or through the web
-    interface at
-    <http://rt.cpan.org/NoAuth/ReportBug.html?Queue=CatalystX-InjectComponen
-    t>. I will be notified, and then you'll automatically be notified of
-    progress on your bug as I make changes.
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2012 by Robert Krimen.
 
-SUPPORT
-    You can find documentation for this module with the perldoc command.
-
-        perldoc CatalystX::InjectComponent
-
-    You can also look for information at:
-
-    *   RT: CPAN's request tracker
-
-        <http://rt.cpan.org/NoAuth/Bugs.html?Dist=CatalystX-InjectComponent>
-
-    *   AnnoCPAN: Annotated CPAN documentation
-
-        <http://annocpan.org/dist/CatalystX-InjectComponent>
-
-    *   CPAN Ratings
-
-        <http://cpanratings.perl.org/d/CatalystX-InjectComponent>
-
-    *   Search CPAN
-
-        <http://search.cpan.org/dist/CatalystX-InjectComponent/>
-
-ACKNOWLEDGEMENTS
-COPYRIGHT & LICENSE
-    Copyright 2009 Robert Krimen, all rights reserved.
-
-    This program is free software; you can redistribute it and/or modify it
-    under the same terms as Perl itself.
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
 

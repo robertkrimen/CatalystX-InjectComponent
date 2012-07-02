@@ -1,19 +1,8 @@
 package CatalystX::InjectComponent;
+# ABSTRACT: Inject components into your Catalyst application
 
 use warnings;
 use strict;
-
-=head1 NAME
-
-CatalystX::InjectComponent - Inject components into your Catalyst application
-
-=head1 VERSION
-
-Version 0.024
-
-=cut
-
-our $VERSION = '0.024';
 
 =head1 SYNOPSIS
 
@@ -44,7 +33,7 @@ a new package on-the-fly, having that package extend the given component, and th
 
 =head1 So, how do I use this thing?
 
-You should inject your components when appropiate, typically after C<setup_compenents> runs
+You should inject your components when appropriate, typically after C<setup_compenents> runs
 
 If you're using the Moose version of Catalyst, then you can use the following technique:
 
@@ -151,61 +140,5 @@ sub _setup_component {
     my $component_package = shift;
     $into->components->{$component_package} = $into->setup_component( $component_package );
 }
-
-=head1 AUTHOR
-
-Robert Krimen, C<< <rkrimen at cpan.org> >>
-
-=head1 BUGS
-
-Please report any bugs or feature requests to C<bug-catalystx-injectcomponent at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=CatalystX-InjectComponent>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
-
-
-
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc CatalystX::InjectComponent
-
-
-You can also look for information at:
-
-=over 4
-
-=item * RT: CPAN's request tracker
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=CatalystX-InjectComponent>
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/CatalystX-InjectComponent>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/CatalystX-InjectComponent>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/CatalystX-InjectComponent/>
-
-=back
-
-
-=head1 ACKNOWLEDGEMENTS
-
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2009 Robert Krimen, all rights reserved.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
-
-
-=cut
 
 1; # End of CatalystX::InjectComponent
